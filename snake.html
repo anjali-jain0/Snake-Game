@@ -1,0 +1,135 @@
+<!doctype html>
+<html>
+<head>
+	<title>Snake Game</title>
+  <link href='style.css' rel="stylesheet">
+</head>
+<body>
+	<canvas width="100%" height="100%" id="canvas1"></canvas>
+</body>
+<script>
+	var c=document.getElementById("canvas1");
+	var ctx=c.getContext("2d");
+	c.height=window.innerHeight*0.85;
+	c.width=window.innerWidth*0.60;
+
+    var speed=3;var grid=30;
+
+    window.addEventListener("keyup",
+    function(event)
+    {
+      if(event.keyCode=="37")
+        {
+          if(rect1.dx==speed && rect1.dy==0){event.keyCode=='39';}
+          else{
+        	rect1.dx=-speed;rect1.dy=0;}
+        }
+      if(event.keyCode=="38")
+        {
+          if(rect1.dy==speed && rect1.dx==0){event.keyCode=='40';}
+        	else{rect1.dy=-speed;rect1.dx=0;}
+        }
+      if(event.keyCode=="39")
+        {
+          if(rect1.dx==-speed && rect1.dy==0){event.keyCode=='37';}
+        	else{rect1.dx=speed;rect1.dy=0;}
+        }
+      if(event.keyCode=="40")
+        {
+          if(rect1.dy==-speed && rect1.dx==0){event.keyCode=='38';}
+        	else{rect1.dy=speed;rect1.dx=0;}
+        }
+    });
+
+  function Draw(x,y,w,h,color){
+  	  this.x=x;
+  	  this.y=y;
+  	  this.w=w;
+  	  this.h=h;
+      this.color=color;
+
+      this.draw=function(){
+  	  ctx.beginPath();
+      ctx.fillStyle=this.color;
+      ctx.fillRect(this.x,this.y,this.w,this.h);
+  }}
+
+  function Rect(x,y,w,h,dx,dy)
+  {
+    this.x=x;
+    this.y=y;
+    this.w=w;
+    this.h=h;
+    this.dx=dx;
+    this.dy=dy;
+    this.total=1;
+    this.size=[];
+
+    this.update=function()
+    {
+
+      if(this.total==this.size.length){
+      for(var f=0;f<this.total-1;f++)
+      {
+      	this.size[f]=this.size[f+1];
+      }}
+
+      this.size[this.total-1]=new Draw(this.x,this.y,this.w,this.h,"brown");
+      for(dd=0;dd<this.size.length;dd++)
+      {this.size[dd].draw();}
+
+      this.x+=this.dx;
+      this.y+=this.dy;
+      if(this.x+grid>=c.width || this.x<=0)
+      	{this.dx=0;this.dy=0;}
+      if(this.y+grid>=c.height || this.y<=0)
+      	{this.dx=0;this.dy=0;}
+
+      if(this.x+this.w>=c.width){alert('Game Over');};
+      if(this.x<=0){alert('Game Over')};
+      if(this.y<=0){alert('Game Over')};
+      if(this.y+this.h>=c.height){alert('Game Over');};
+    }}
+  
+    var rect1=new Rect(200,300,grid,grid,0,0);
+
+    var array=[];
+    for(var l=0;l<30;l++)
+    {
+    var x=Math.random()*(c.width-90)+30;
+    var y=Math.random()*(c.height-90)+30;
+    array.push(new Draw(x,y,grid,grid,"red"));
+    }
+
+	function getDistance(x5,x6,y5,y6)
+	{
+	    var xD=x5-x6;
+	    var yD=y5-y6;
+	    return Math.sqrt(Math.pow(xD,2)+Math.pow(yD,2));
+	}
+
+  var g=0;
+	var j=0;
+	function animate()
+	{
+		requestAnimationFrame(animate);
+	    ctx.clearRect(0,0,innerWidth,innerHeight);
+	    rect1.update();
+	    array[j].draw();
+      ctx.font="18px Arial";
+      ctx.fillStyle="black";
+      ctx.fillText("SCORE:" + g,10,22);
+
+	    if(getDistance(array[j].x+grid/2,rect1.x+grid/2,array[j].y+grid/2,rect1.y+grid/2)<=grid && array[j].w!=0)
+	     	{ 
+	     	     rect1.total++;
+	           array[j].w=0;g++;
+	           if(j<10)
+	           {j++;}
+	     	}
+	}
+	  
+	animate();
+  
+</script>
+</html>
